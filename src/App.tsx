@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, Search, Share2, Globe, Clock, ChevronRight, TrendingUp } from 'lucide-react';
+import { Menu, Search, Share2, Globe, Clock, ChevronRight, TrendingUp, Settings, X, Plus, Check } from 'lucide-react';
 
 // --- MOCK DATA ---
 const TOP_STORY = {
@@ -56,9 +56,105 @@ const CATEGORIES = ['US NEWS', 'WORLD', 'POLITICS', 'BUSINESS', 'TECH', 'SPORTS'
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'latest' | 'my-feed'>('latest');
+  const [isPersonalizeModalOpen, setIsPersonalizeModalOpen] = useState(false);
+  
+  const [preferences, setPreferences] = useState({
+    categories: ['POLITICS', 'TECHNOLOGY'],
+    regions: ['NEW YORK', 'CALIFORNIA'],
+    keywords: ['AI', 'ELECTIONS']
+  });
+
+  const toggleCategory = (cat: string) => setPreferences(prev => ({
+    ...prev,
+    categories: prev.categories.includes(cat) ? prev.categories.filter(c => c !== cat) : [...prev.categories, cat]
+  }));
+
+  const toggleRegion = (reg: string) => setPreferences(prev => ({
+    ...prev,
+    regions: prev.regions.includes(reg) ? prev.regions.filter(r => r !== reg) : [...prev.regions, reg]
+  }));
+
+  const addKeyword = (kw: string) => {
+    if(kw.trim() && !preferences.keywords.includes(kw.toUpperCase())) {
+      setPreferences(prev => ({ ...prev, keywords: [...prev.keywords, kw.trim().toUpperCase()] }));
+    }
+  };
+
+  const removeKeyword = (kw: string) => setPreferences(prev => ({
+    ...prev,
+    keywords: prev.keywords.filter(k => k !== kw)
+  }));
 
   return (
     <div className="min-h-screen flex flex-col bg-[#ffffff] text-[#1a1a1a] font-sans selection:bg-red-500 selection:text-white">
+      {/* Personalize Modal */}
+      {isPersonalizeModalOpen && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-4">
+          <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto border-4 border-black p-6 md:p-8 flex flex-col relative">
+            <button onClick={() => setIsPersonalizeModalOpen(false)} className="absolute top-6 right-6 text-black hover:text-red-600 transition-colors">
+              <X className="w-8 h-8" />
+            </button>
+            <h2 className="text-3xl md:text-5xl font-serif font-black uppercase mb-2 leading-none tracking-tighter pr-12">Tailor Your News</h2>
+            <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-8 pb-4 border-b-2 border-black">Customize your feed across USA, India, and Global stories</p>
+            
+            {/* Categories */}
+            <div className="mb-8">
+              <h3 className="text-[11px] font-bold bg-black text-white inline-block px-3 py-1 uppercase tracking-widest mb-4">Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                  {['POLITICS', 'BUSINESS', 'TECHNOLOGY', 'ENTERTAINMENT', 'HEALTH', 'SPORTS', 'WORLD', 'INDIA', 'OPINION'].map(cat => (
+                    <button 
+                      key={cat}
+                      onClick={() => toggleCategory(cat)}
+                      className={`border-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${preferences.categories.includes(cat) ? 'border-red-600 bg-red-600 text-white' : 'border-gray-300 hover:border-black text-black'}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+              </div>
+            </div>
+
+            {/* Regions */}
+            <div className="mb-8">
+               <h3 className="text-[11px] font-bold bg-black text-white inline-block px-3 py-1 uppercase tracking-widest mb-4">USA Regions & Cities</h3>
+               <div className="flex flex-wrap gap-2">
+                  {['EAST COAST', 'WEST COAST', 'MIDWEST', 'SOUTH', 'NEW YORK', 'CALIFORNIA', 'TEXAS', 'FLORIDA', 'WASHINGTON D.C.', 'SILICON VALLEY'].map(reg => (
+                    <button 
+                      key={reg}
+                      onClick={() => toggleRegion(reg)}
+                      className={`border-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${preferences.regions.includes(reg) ? 'border-red-600 bg-red-600 text-white' : 'border-gray-300 hover:border-black text-black'}`}
+                    >
+                      {reg}
+                    </button>
+                  ))}
+               </div>
+            </div>
+
+            {/* Keywords */}
+            <div className="mb-8">
+               <h3 className="text-[11px] font-bold bg-black text-white inline-block px-3 py-1 uppercase tracking-widest mb-4">Follow Keywords</h3>
+               <div className="flex items-center gap-2 mb-4">
+                  <input type="text" placeholder="e.g. AI, Elections, Space" className="flex-1 border-2 border-black px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-red-600" onKeyDown={e => { if(e.key === 'Enter') addKeyword(e.currentTarget.value); }} id="keyword-input" />
+                  <button onClick={() => { const input = document.getElementById('keyword-input') as HTMLInputElement; addKeyword(input.value); input.value=''; }} className="bg-black text-white px-6 py-3 font-bold uppercase tracking-[0.2em] text-[10px] hover:bg-red-600 transition-colors">Add</button>
+               </div>
+               <div className="flex flex-wrap gap-2">
+                 {preferences.keywords.map(kw => (
+                   <div key={kw} className="bg-gray-100 flex items-center gap-2 px-3 py-1 border border-gray-300">
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{kw}</span>
+                      <button onClick={() => removeKeyword(kw)} className="hover:text-red-600 text-gray-500 transition-colors cursor-pointer"><X className="w-3 h-3" /></button>
+                   </div>
+                 ))}
+                 {preferences.keywords.length === 0 && <span className="text-xs text-gray-400 italic">No keywords added yet.</span>}
+               </div>
+            </div>
+
+            <button onClick={() => setIsPersonalizeModalOpen(false)} className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 uppercase tracking-[0.2em] text-[12px] transition-colors mt-auto flex items-center justify-center gap-2 cursor-pointer">
+              Save Preferences <Check className="w-4 h-4"/>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 1. TOP HEADER */}
       <header className="bg-white border-b-4 border-black">
         {/* Secondary Navigation Strip (Scrollable on Mobile) - Moved to top to match dark top bar */}
@@ -212,11 +308,34 @@ export default function App() {
 
           {/* More News Feed */}
           <section className="p-6 md:p-8">
-            <h2 className="text-2xl font-serif font-bold italic border-b-2 border-black pb-2 mb-8 inline-block pr-12">Trending Across Regions</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-black pb-4 mb-8 gap-4">
+              <div className="flex gap-6">
+                <button onClick={() => setActiveTab('latest')} className={`text-[2rem] font-serif font-bold italic transition-colors leading-none tracking-tight ${activeTab === 'latest' ? 'text-black underline decoration-4 underline-offset-8' : 'text-gray-400 hover:text-black'}`}>Latest News</button>
+                <button onClick={() => setActiveTab('my-feed')} className={`text-[2rem] font-serif font-bold italic transition-colors leading-none tracking-tight ${activeTab === 'my-feed' ? 'text-black underline decoration-4 underline-offset-8' : 'text-gray-400 hover:text-black'}`}>My Feed</button>
+              </div>
+              <button 
+                onClick={() => setIsPersonalizeModalOpen(true)} 
+                className="flex items-center gap-2 bg-white hover:bg-gray-100 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors border-2 border-black cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              >
+                <Settings className="w-3 h-3" /> Personalize
+              </button>
+            </div>
+
+            {activeTab === 'my-feed' && (
+              <div className="mb-8 p-4 bg-gray-50 border border-gray-200 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mr-2 flex items-center gap-2"><Check className="w-3 h-3 text-red-600" /> ACTIVE FILTERS:</span>
+                {[...preferences.categories, ...preferences.regions, ...preferences.keywords].map(t => (
+                  <span key={t} className="bg-black text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">{t}</span>
+                ))}
+                {(!preferences.categories.length && !preferences.regions.length && !preferences.keywords.length) && (
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">All topics. Click Personalize to tailor your feed.</span>
+                )}
+              </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
-              {FEED_NEWS.map((news) => (
-                <article key={news.id} className="group cursor-pointer flex flex-col">
+              {(activeTab === 'latest' ? FEED_NEWS : [...FEED_NEWS].reverse()).map((news) => (
+                <article key={news.id + activeTab} className="group cursor-pointer flex flex-col">
                   <div className="aspect-[3/2] w-full bg-gray-200 overflow-hidden mb-4 border-b-[3px] border-transparent group-hover:border-red-600 transition-all duration-300">
                     <img 
                       src={news.imageUrl} 
