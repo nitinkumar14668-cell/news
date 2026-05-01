@@ -80,6 +80,7 @@ export default function App() {
   const [isPersonalizeModalOpen, setIsPersonalizeModalOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState('');
+  const [currentView, setCurrentView] = useState<'home' | 'about'>('home');
   
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,7 +222,7 @@ export default function App() {
 
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center justify-center lg:justify-start flex-1 lg:flex-none">
-              <a href="/" className="flex items-center gap-2">
+              <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('home'); }} className="flex items-center gap-2">
                 <span className="font-serif font-black leading-none tracking-tighter uppercase text-[40px] md:text-[64px]">
                   USA<span className="text-red-600">NEWS</span>
                 </span>
@@ -276,8 +277,10 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 w-full flex flex-col lg:flex-row gap-0 border-x-0 sm:border-x border-gray-200">
         
-        {/* Left/Main Column */}
-        <div className="w-full lg:w-[65%] flex flex-col gap-0 border-b lg:border-b-0 lg:border-r border-gray-200">
+        {currentView === 'home' ? (
+          <>
+          {/* Left/Main Column */}
+          <div className="w-full lg:w-[65%] flex flex-col gap-0 border-b lg:border-b-0 lg:border-r border-gray-200">
           
           {/* Top Story Section */}
           <article className="bg-[#ffffff] overflow-hidden p-6 md:p-8 flex flex-col border-b border-gray-200">
@@ -483,6 +486,47 @@ export default function App() {
              Rectangle Ad Placeholder
           </div>
         </aside>
+          </>
+        ) : (
+          <div className="w-full p-6 md:p-12 flex flex-col gap-8 max-w-4xl mx-auto">
+            <div>
+              <h1 className="text-[40px] md:text-[54px] font-serif font-black leading-[1.05] tracking-tight mb-4">About USA <span className="text-red-600">NEWS</span></h1>
+              <p className="text-xl text-gray-600 font-serif leading-relaxed">Delivering truth, clarity, and uncompromising journalism to American, Indian, and global audiences.</p>
+            </div>
+            
+            <div className="border-t-2 border-black pt-8">
+              <h2 className="text-2xl font-serif font-bold italic mb-4">Our Mission</h2>
+              <p className="text-gray-700 leading-relaxed mb-6">
+                At USA NEWS, our mission is to provide accurate, unbiased, and comprehensive news coverage. We believe that an informed public is the cornerstone of a functioning democracy. In an era of misinformation, we strive to be a beacon of factual reporting, focusing on what matters most to our readers across the globe.
+              </p>
+              
+              <h2 className="text-2xl font-serif font-bold italic mb-4">Our Vision</h2>
+              <p className="text-gray-700 leading-relaxed mb-6">
+                We aim to bridge the gap between local nuances and global perspectives. By targeting audiences in the USA, India, and worldwide, we foster a connected community that understands the ripple effects of regional events on the global stage. Our vision is to be the most trusted source of news for the modern, globally-minded citizen.
+              </p>
+
+              <h2 className="text-2xl font-serif font-bold italic mb-4">The Team</h2>
+              <p className="text-gray-700 leading-relaxed mb-8">
+                Our editorial team comprises veteran journalists, data analysts, and international correspondents who bring decades of experience from leading global newsrooms. Headquartered in New York, with major bureaus in Washington D.C., Silicon Valley, and New Delhi, we work around the clock to bring you stories that shape our world.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                {[
+                  { name: 'Eleanor Vance', role: 'Editor-in-Chief', exp: '20+ years of investigative journalism.' },
+                  { name: 'Rajesh Kumar', role: 'Head of Global Desk', exp: 'Former international policy advisor.' },
+                  { name: 'Sarah Jenkins', role: 'Chief Political Correspondent', exp: 'Covering Capitol Hill since 2012.' }
+                ].map(member => (
+                  <div key={member.name} className="border border-gray-200 p-6 flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-gray-200 rounded-full mb-4"></div>
+                    <h3 className="font-bold text-lg">{member.name}</h3>
+                    <p className="text-[10px] uppercase font-bold tracking-widest text-red-600 mb-2">{member.role}</p>
+                    <p className="text-xs text-gray-500">{member.exp}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         
       </main>
 
@@ -515,7 +559,7 @@ export default function App() {
             <div>
               <h4 className="text-black font-bold uppercase tracking-[0.15em] text-[10px] mb-6 border-l-2 border-red-600 pl-3">Corporate</h4>
               <ul className="space-y-4 text-[13px] font-bold text-gray-500">
-                <li><a href="#" className="hover:text-red-600 transition-colors">About Us</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('about'); window.scrollTo(0, 0); }} className="hover:text-red-600 transition-colors">About Us</a></li>
                 <li><a href="#" className="hover:text-red-600 transition-colors">Careers</a></li>
                 <li><a href="#" className="hover:text-red-600 transition-colors">Contact</a></li>
                 <li><a href="#" className="hover:text-red-600 transition-colors">Advertise</a></li>
