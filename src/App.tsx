@@ -10,6 +10,10 @@ const TOP_STORY = {
   source: 'USA News Media',
   date: 'May 01, 2026, 08:34 AM EDT',
   imageUrl: 'https://images.unsplash.com/photo-1580128660010-fd027e1e587a?q=80&w=1470&auto=format&fit=crop', // Placeholder for US Politics / Whitehouse
+  related: [
+    "Senate Committee announces new hearing schedule for next month",
+    "Global markets react to Middle East developments",
+  ]
 };
 
 const TRENDING_NEWS = [
@@ -26,6 +30,10 @@ const FEED_NEWS = [
     category: 'POLITICS',
     time: '3 hours ago',
     imageUrl: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=1200&auto=format&fit=crop',
+    related: [
+       "Telecom stocks rally following privacy ruling",
+       "Tech giants brace for impact as new privacy standards emerge",
+    ]
   },
   {
     id: 'f2',
@@ -33,6 +41,10 @@ const FEED_NEWS = [
     category: 'TECHNOLOGY',
     time: '5 hours ago',
     imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop',
+    related: [
+      "Quantum computing's encryption threat explained",
+      "Top VC firms increase funding for deep tech startups"
+    ]
   },
   {
     id: 'f3',
@@ -40,6 +52,10 @@ const FEED_NEWS = [
     category: 'WEATHER',
     time: '6 hours ago',
     imageUrl: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1200&auto=format&fit=crop',
+    related: [
+      "Airline delay predictions for weekend travelers",
+      "Emergency preparedness tips for coastal cities"
+    ]
   },
   {
     id: 'f4',
@@ -47,6 +63,10 @@ const FEED_NEWS = [
     category: 'SPORTS',
     time: '8 hours ago',
     imageUrl: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop',
+    related: [
+      "Economic impact of LA28 on local businesses",
+      "New sports added to the 2028 Olympic roster"
+    ]
   }
 ];
 
@@ -281,6 +301,17 @@ export default function App() {
                   </p>
                   <a href="#" className="font-bold text-red-600 underline underline-offset-4 hover:text-black mb-4">Read Full Story</a>
                   
+                  <div className="mb-4 space-y-2">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.1em] text-black">Related Coverage:</h4>
+                    <ul className="flex flex-col gap-2">
+                      {TOP_STORY.related.map((rel, i) => (
+                        <li key={i} className="text-sm font-semibold text-gray-800 hover:text-red-600 hover:underline underline-offset-2 cursor-pointer flex gap-2">
+                           <span className="text-red-600">•</span> {rel}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
                   <div className="flex flex-col gap-4 text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-auto border-t border-gray-200 pt-4">
                     <div className="flex justify-between items-center sm:flex-col sm:items-start lg:flex-row lg:items-center gap-2">
                       <span className="text-black">{TOP_STORY.source}</span>
@@ -349,6 +380,18 @@ export default function App() {
                   <h3 className="text-[22px] font-serif font-black leading-tight group-hover:underline mb-4 decoration-2 underline-offset-4">
                     {news.title}
                   </h3>
+                  
+                  <div className="mb-6 space-y-2">
+                    <h4 className="text-[9px] font-bold uppercase tracking-[0.1em] text-gray-500">Related Articles</h4>
+                    <ul className="flex flex-col gap-2 border-l-2 border-red-600 pl-3">
+                      {news.related.map((rel, i) => (
+                        <li key={i} className="text-xs font-semibold text-gray-700 hover:text-red-600 hover:underline underline-offset-2 cursor-pointer">
+                           {rel}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
                   <div className="text-[9px] uppercase tracking-widest font-bold text-gray-400 mt-auto border-t border-gray-100 pt-3">
                     <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {news.time}</span>
                   </div>
