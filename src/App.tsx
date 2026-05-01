@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Menu, Search, Share2, Globe, Clock, ChevronRight, TrendingUp, Settings, X, Plus, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, Search, Share2, Globe, Clock, ChevronRight, TrendingUp, Settings, X, Plus, Check, CheckCircle2 } from 'lucide-react';
 
 // --- MOCK DATA ---
 const TOP_STORY = {
@@ -78,6 +78,17 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'latest' | 'my-feed'>('latest');
   const [isPersonalizeModalOpen, setIsPersonalizeModalOpen] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
+  
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (emailInput.trim()) {
+      setIsSubscribed(true);
+      setEmailInput('');
+      setTimeout(() => setIsSubscribed(false), 5000);
+    }
+  };
   
   const [preferences, setPreferences] = useState({
     categories: ['POLITICS', 'TECHNOLOGY'],
@@ -430,26 +441,40 @@ export default function App() {
 
           {/* Newsletter Box */}
           <div className="p-6 md:p-8">
-            <div className="bg-black text-white p-8 relative border-2 border-black">
+            <div className="bg-black text-white p-8 relative border-2 border-black min-h-[300px] flex flex-col justify-center">
               <p className="text-[10px] uppercase tracking-[0.2em] mb-4 text-red-500 font-bold">Editorial Briefing</p>
-              <h3 className="text-[22px] font-serif italic mb-6 leading-tight text-white font-light">
-                "The American Dream is increasingly becoming a digital-first reality for global entrepreneurs."
-              </h3>
-              <p className="text-[9px] uppercase tracking-widest font-bold opacity-70 mb-8 border-b border-gray-800 pb-4">— USA News Desk</p>
               
-              <form className="relative z-10 flex flex-col gap-4 mt-4">
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-none border-none focus:outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm"
-                />
-                <button 
-                  type="button"
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 px-4 rounded-none transition-colors uppercase tracking-[0.2em] text-[10px] flex justify-center items-center gap-2"
-                >
-                  Subscribe <ChevronRight className="w-4 h-4" />
-                </button>
-              </form>
+              {isSubscribed ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
+                  <CheckCircle2 className="w-12 h-12 text-red-500 mb-4" />
+                  <h3 className="text-2xl font-serif italic mb-2 leading-tight">You're on the list.</h3>
+                  <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Check your inbox to confirm your subscription.</p>
+                </div>
+              ) : (
+                <div className="animate-in fade-in duration-300">
+                  <h3 className="text-[22px] font-serif italic mb-6 leading-tight text-white font-light">
+                    "The American Dream is increasingly becoming a digital-first reality for global entrepreneurs."
+                  </h3>
+                  <p className="text-[9px] uppercase tracking-widest font-bold opacity-70 mb-8 border-b border-gray-800 pb-4">— USA News Desk</p>
+                  
+                  <form onSubmit={handleSubscribe} className="relative z-10 flex flex-col gap-4 mt-4">
+                    <input 
+                      type="email" 
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      required
+                      placeholder="Your email address" 
+                      className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-none border-none focus:outline-none focus:ring-2 focus:ring-red-600 font-bold text-sm"
+                    />
+                    <button 
+                      type="submit"
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 px-4 rounded-none transition-colors uppercase tracking-[0.2em] text-[10px] flex justify-center items-center gap-2"
+                    >
+                      Subscribe <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
           </div>
 
